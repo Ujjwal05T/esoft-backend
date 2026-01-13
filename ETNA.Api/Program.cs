@@ -19,13 +19,17 @@ builder.Services.AddSingleton<IDbConnectionFactory>(new SqlConnectionFactory(con
 
 // Repositories
 builder.Services.AddScoped<IWorkshopOwnerRepository, WorkshopOwnerRepository>();
+builder.Services.AddScoped<IWorkshopStaffRepository, WorkshopStaffRepository>();
 
 // Services
+builder.Services.AddHttpClient(); // Required for Authkey SMS service
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<ISmsService, AuthkeySmsService>();
 builder.Services.AddSingleton<IOtpService, OtpService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IWorkshopOwnerService, WorkshopOwnerService>();
+builder.Services.AddScoped<IWorkshopStaffService, WorkshopStaffService>();
 builder.Services.AddScoped<IFileUploadService, LocalFileUploadService>();
 builder.Services.AddScoped<IVerificationService, VerificationService>();
 
@@ -66,7 +70,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:3001") // Next.js default port
+        policy.WithOrigins("http://localhost:3000", "http://localhost:3001","https://esoft-one.vercel.app") // Next.js default port
               .AllowAnyHeader()
               .AllowAnyMethod();
     });

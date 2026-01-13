@@ -66,12 +66,18 @@ public class EmailService : IEmailService
             "Registration" => "ETNA - Verify Your Email",
             "PasswordReset" => "ETNA - Password Reset OTP",
             "ETNATeamVerification" => "ETNA - Team Verification Code",
+            "StaffPhoneVerification" => "ETNA - Staff Verification Code",
             _ => "ETNA - Your OTP Code"
         };
         
         var body = GetOtpEmailTemplate(otp, purpose);
         
         return await SendEmailAsync(to, subject, body, true);
+    }
+    
+    public async Task<bool> SendOtpAsync(string to, string otp)
+    {
+        return await SendOtpEmailAsync(to, otp, "StaffPhoneVerification");
     }
     
     private static string GetOtpEmailTemplate(string otp, string purpose)

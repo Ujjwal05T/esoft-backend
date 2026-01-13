@@ -8,7 +8,17 @@ namespace ETNA.Api.Services.Interfaces;
 public interface IAuthService
 {
     /// <summary>
-    /// Authenticate user and return JWT token
+    /// Authenticate owner and return JWT token
+    /// </summary>
+    Task<LoginResponseDto> LoginOwnerAsync(LoginDto dto);
+    
+    /// <summary>
+    /// Authenticate staff and return JWT token
+    /// </summary>
+    Task<LoginResponseDto> LoginStaffAsync(LoginDto dto);
+    
+    /// <summary>
+    /// Generic login - tries owner first, then staff
     /// </summary>
     Task<LoginResponseDto> LoginAsync(LoginDto dto);
     

@@ -44,9 +44,9 @@ public class WorkshopStaff
     public int WorkshopOwnerId { get; set; }
     
     /// <summary>
-    /// Whether the staff's email has been verified via OTP
+    /// Whether the staff's phone has been verified via SMS OTP
     /// </summary>
-    public bool IsEmailVerified { get; set; } = false;
+    public bool IsPhoneVerified { get; set; } = false;
     
     /// <summary>
     /// Whether the staff account is active
@@ -56,7 +56,7 @@ public class WorkshopStaff
     /// <summary>
     /// Current status in the registration/approval flow
     /// </summary>
-    public StaffRegistrationStatus RegistrationStatus { get; set; } = StaffRegistrationStatus.PendingEmailVerification;
+    public StaffRegistrationStatus RegistrationStatus { get; set; } = StaffRegistrationStatus.PendingPhoneVerification;
     
     /// <summary>
     /// Date when the staff member registered
@@ -93,12 +93,12 @@ public class WorkshopStaff
 public enum StaffRegistrationStatus
 {
     /// <summary>
-    /// Staff has registered but email not yet verified
+    /// Staff has registered but phone not yet verified
     /// </summary>
-    PendingEmailVerification = 0,
+    PendingPhoneVerification = 0,
     
     /// <summary>
-    /// Email verified, waiting for workshop owner approval
+    /// Phone verified, waiting for workshop owner approval
     /// </summary>
     PendingOwnerApproval = 1,
     

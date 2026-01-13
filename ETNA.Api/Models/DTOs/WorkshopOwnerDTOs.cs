@@ -82,3 +82,12 @@ public class ResendOtpDto
     [EmailAddress(ErrorMessage = "Invalid email format")]
     public string Email { get; set; } = string.Empty;
 }
+
+/// <summary>
+/// DTO for resending phone OTP request
+/// </summary>
+public class ResendPhoneOtpDto
+{
+    [Required(ErrorMessage = "Phone number is required")]
+    public string PhoneNumber { get; set; } = string.Empty;
+}

@@ -8,9 +8,14 @@ namespace ETNA.Api.Services.Interfaces;
 public interface IJwtService
 {
     /// <summary>
-    /// Generate a JWT token for the given user
+    /// Generate a JWT token for workshop owner
     /// </summary>
     string GenerateToken(WorkshopOwner owner, string role);
+    
+    /// <summary>
+    /// Generate a JWT token for workshop staff
+    /// </summary>
+    string GenerateStaffToken(WorkshopStaff staff, string workshopName, string role);
     
     /// <summary>
     /// Get token expiry time

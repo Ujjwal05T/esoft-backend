@@ -39,6 +39,7 @@ public class JwtService : IJwtService
             new(ClaimTypes.Name, owner.OwnerName),
             new(ClaimTypes.Role, role),
             new("WorkshopName", owner.WorkshopName),
+            new("WorkshopOwnerId", owner.Id.ToString()),
             new("City", owner.City),
             new("IsActive", owner.IsActive.ToString()),
             new("RegistrationStatus", owner.RegistrationStatus.ToString())
@@ -54,7 +55,46 @@ public class JwtService : IJwtService
         
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
         
-        _logger.LogInformation("JWT token generated for user: {Email}, expires in {Days} days", owner.Email, expiryMinutes / 1440);
+        _logger.LogInformation("JWT token generated for owner: {Email}, expires in {Days} days", owner.Email, expiryMinutes / 1440);
+        
+        return tokenString;
+    }
+    
+    public string GenerateStaffToken(WorkshopStaff staff, string workshopName, string role)
+    {
+        var jwtSettings = _configuration.GetSection("JwtSettings");
+        var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+        var issuer = jwtSettings["Issuer"] ?? "ETNA.Api";
+        var audience = jwtSettings["Audience"] ?? "ETNA.Client";
+        var expiryMinutes = int.Parse(jwtSettings["ExpiryMinutes"] ?? "43200"); // 30 days default
+        
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, staff.Id.ToString()),
+            new(ClaimTypes.Email, staff.Email),
+            new(ClaimTypes.Name, staff.Name),
+            new(ClaimTypes.Role, role),
+            new("WorkshopName", workshopName),
+            new("WorkshopOwnerId", staff.WorkshopOwnerId.ToString()),
+            new("City", staff.City),
+            new("IsActive", staff.IsActive.ToString()),
+            new("RegistrationStatus", staff.RegistrationStatus.ToString())
+        };
+        
+        var token = new JwtSecurityToken(
+            issuer: issuer,
+            audience: audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(expiryMinutes),
+            signingCredentials: credentials
+        );
+        
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        
+        _logger.LogInformation("JWT token generated for staff: {Email}, expires in {Days} days", staff.Email, expiryMinutes / 1440);
         
         return tokenString;
     }
