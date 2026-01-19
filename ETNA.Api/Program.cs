@@ -19,7 +19,7 @@ builder.Services.AddSingleton<IDbConnectionFactory>(new SqlConnectionFactory(con
 
 // Repositories
 builder.Services.AddScoped<IWorkshopOwnerRepository, WorkshopOwnerRepository>();
-builder.Services.AddScoped<IWorkshopStaffRepository, WorkshopStaffRepository>();
+// builder.Services.AddScoped<IWorkshopStaffRepository, WorkshopStaffRepository>(); // TODO: Create this repository
 
 // Services
 builder.Services.AddHttpClient(); // Required for Authkey SMS service
@@ -28,10 +28,13 @@ builder.Services.AddScoped<ISmsService, AuthkeySmsService>();
 builder.Services.AddSingleton<IOtpService, OtpService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IWorkshopOwnerService, WorkshopOwnerService>();
-builder.Services.AddScoped<IWorkshopStaffService, WorkshopStaffService>();
+// builder.Services.AddScoped<IWorkshopOwnerService, WorkshopOwnerService>(); // TODO: Create this service
+// builder.Services.AddScoped<IWorkshopStaffService, WorkshopStaffService>(); // TODO: Create this service
 builder.Services.AddScoped<IFileUploadService, LocalFileUploadService>();
-builder.Services.AddScoped<IVerificationService, VerificationService>();
+// builder.Services.AddScoped<IVerificationService, VerificationService>(); // TODO: Create this service
+builder.Services.AddScoped<IWorkshopRegistrationService, WorkshopRegistrationService>();
+
+
 
 // JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
