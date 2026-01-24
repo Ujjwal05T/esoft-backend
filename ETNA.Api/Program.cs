@@ -19,7 +19,9 @@ builder.Services.AddSingleton<IDbConnectionFactory>(new SqlConnectionFactory(con
 
 // Repositories
 builder.Services.AddScoped<IWorkshopOwnerRepository, WorkshopOwnerRepository>();
-// builder.Services.AddScoped<IWorkshopStaffRepository, WorkshopStaffRepository>(); // TODO: Create this repository
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IVehicleVisitRepository, VehicleVisitRepository>();
+builder.Services.AddScoped<IWorkshopStaffRepository, WorkshopStaffRepository>();
 
 // Services
 builder.Services.AddHttpClient(); // Required for Authkey SMS service
@@ -33,6 +35,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFileUploadService, LocalFileUploadService>();
 // builder.Services.AddScoped<IVerificationService, VerificationService>(); // TODO: Create this service
 builder.Services.AddScoped<IWorkshopRegistrationService, WorkshopRegistrationService>();
+
+// OCR Service (Gemini)
+builder.Services.AddHttpClient<IOcrService, GeminiOcrService>();
 
 
 

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ETNA.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+68fa29ea89b0f7b7d66d396cdfe75fc932c1518f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+37192a46579c3ea90fbbab7a8a6fc01c38cf8fc8")]
 [assembly: System.Reflection.AssemblyProductAttribute("ETNA.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ETNA.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
