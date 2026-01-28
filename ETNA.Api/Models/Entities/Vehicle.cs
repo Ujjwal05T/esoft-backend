@@ -44,8 +44,7 @@ public class Vehicle
 
 public enum VehicleStatus
 {
-    Active = 0,
-    InService = 1,
-    Completed = 2,
-    Archived = 3
+    Active = 0,      // Vehicle actively in workshop
+    Inactive = 1,    // Vehicle not in workshop
+    Requested = 2    // Vehicle added by staff, pending owner approval
 }

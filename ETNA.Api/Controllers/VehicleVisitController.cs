@@ -2,6 +2,7 @@ using ETNA.Api.Data.Interfaces;
 using ETNA.Api.Models.DTOs;
 using ETNA.Api.Models.Entities;
 using ETNA.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -9,6 +10,7 @@ namespace ETNA.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class VehicleVisitController : ControllerBase
 {
     private readonly IVehicleVisitRepository _visitRepository;
@@ -67,8 +69,8 @@ public class VehicleVisitController : ControllerBase
         var id = await _visitRepository.CreateAsync(visit);
         visit.Id = id;
 
-        // Update vehicle status to InService
-        await _vehicleRepository.UpdateStatusAsync(request.VehicleId, VehicleStatus.InService);
+        // Update vehicle status to Active (in workshop)
+        await _vehicleRepository.UpdateStatusAsync(request.VehicleId, VehicleStatus.Active);
 
         _logger.LogInformation("Gate In completed for vehicle {VehicleId}, visit {VisitId}", request.VehicleId, id);
 
@@ -142,8 +144,8 @@ public class VehicleVisitController : ControllerBase
         var id = await _visitRepository.CreateAsync(visit);
         visit.Id = id;
 
-        // Update vehicle status to InService
-        await _vehicleRepository.UpdateStatusAsync(request.VehicleId, VehicleStatus.InService);
+        // Update vehicle status to Active (in workshop)
+        await _vehicleRepository.UpdateStatusAsync(request.VehicleId, VehicleStatus.Active);
 
         _logger.LogInformation("Gate In with media completed for vehicle {VehicleId}, visit {VisitId}", request.VehicleId, id);
 
@@ -184,8 +186,8 @@ public class VehicleVisitController : ControllerBase
             return StatusCode(500, new { message = "Failed to complete gate out" });
         }
 
-        // Update vehicle status back to Active
-        await _vehicleRepository.UpdateStatusAsync(visit.VehicleId, VehicleStatus.Active);
+        // Update vehicle status to Inactive (not in workshop)
+        await _vehicleRepository.UpdateStatusAsync(visit.VehicleId, VehicleStatus.Inactive);
 
         _logger.LogInformation("Gate Out completed for visit {VisitId}", id);
 

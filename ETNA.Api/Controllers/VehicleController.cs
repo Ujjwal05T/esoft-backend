@@ -10,6 +10,7 @@ namespace ETNA.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class VehicleController : ControllerBase
 {
     private readonly IVehicleRepository _vehicleRepository;
@@ -53,7 +54,7 @@ public class VehicleController : ControllerBase
             OdometerReading = request.OdometerReading,
             Observations = request.Observations,
             WorkshopOwnerId = workshopOwnerId,
-            Status = VehicleStatus.Active,
+            Status = VehicleStatus.Inactive,  // New vehicles start as not in workshop
             CreatedAt = DateTime.UtcNow
         };
 
@@ -99,7 +100,7 @@ public class VehicleController : ControllerBase
             Observations = request.Observations,
             ObservationsAudioUrl = audioUrl,
             WorkshopOwnerId = workshopOwnerId,
-            Status = VehicleStatus.Active,
+            Status = VehicleStatus.Inactive,  // New vehicles start as not in workshop
             CreatedAt = DateTime.UtcNow
         };
 
