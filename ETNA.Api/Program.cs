@@ -23,6 +23,7 @@ builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<IVehicleVisitRepository, VehicleVisitRepository>();
 builder.Services.AddScoped<IWorkshopStaffRepository, WorkshopStaffRepository>();
 builder.Services.AddScoped<IJobCardRepository, JobCardRepository>();
+builder.Services.AddScoped<IInquiryRepository, InquiryRepository>();
 
 // Services
 builder.Services.AddHttpClient(); // Required for Authkey SMS service
