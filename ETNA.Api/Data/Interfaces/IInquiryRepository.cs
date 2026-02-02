@@ -9,6 +9,7 @@ public interface IInquiryRepository
     Task<int> CreateInquiryItemAsync(InquiryItem item);
     
     // Read
+    Task<List<Inquiry>> GetAllInquiriesAsync();
     Task<Inquiry?> GetInquiryByIdAsync(int id);
     Task<List<InquiryItem>> GetInquiryItemsByInquiryIdAsync(int inquiryId);
     Task<List<Inquiry>> GetInquiriesByVehicleIdAsync(int vehicleId);

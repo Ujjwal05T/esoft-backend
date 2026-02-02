@@ -12,15 +12,18 @@ public class InquiryController : ControllerBase
     private readonly IInquiryRepository _inquiryRepository;
     private readonly IVehicleRepository _vehicleRepository;
     private readonly IWorkshopStaffRepository _staffRepository;
+    private readonly IWorkshopOwnerRepository _workshopOwnerRepository;
 
     public InquiryController(
         IInquiryRepository inquiryRepository,
         IVehicleRepository vehicleRepository,
-        IWorkshopStaffRepository staffRepository)
+        IWorkshopStaffRepository staffRepository,
+        IWorkshopOwnerRepository workshopOwnerRepository)
     {
         _inquiryRepository = inquiryRepository;
         _vehicleRepository = vehicleRepository;
         _staffRepository = staffRepository;
+        _workshopOwnerRepository = workshopOwnerRepository;
     }
 
     /// <summary>
@@ -115,7 +118,8 @@ public class InquiryController : ControllerBase
                 itemResponses,
                 $"{vehicle.Brand} {vehicle.Model}",
                 vehicle.PlateNumber,
-                staff?.Name
+                staff?.Name,
+                null // workshopOwnerName - not needed for POST
             );
 
             return CreatedAtAction(nameof(GetInquiryById), new { id = inquiryId }, response);
@@ -123,6 +127,68 @@ public class InquiryController : ControllerBase
         catch (Exception ex)
         {
             return StatusCode(500, new { message = "Error creating inquiry", error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Get all inquiries (for admin portal)
+    /// </summary>
+    [HttpGet]
+    public async Task<ActionResult<InquiryListResponse>> GetAllInquiries()
+    {
+        try
+        {
+            var inquiries = await _inquiryRepository.GetAllInquiriesAsync();
+
+            var responses = new List<InquiryResponse>();
+            foreach (var inquiry in inquiries)
+            {
+                var items = await _inquiryRepository.GetInquiryItemsByInquiryIdAsync(inquiry.Id);
+                var vehicle = await _vehicleRepository.GetByIdAsync(inquiry.VehicleId);
+                var staff = inquiry.RequestedByStaffId.HasValue
+                    ? await _staffRepository.GetByIdAsync(inquiry.RequestedByStaffId.Value)
+                    : null;
+                var workshopOwner = await _workshopOwnerRepository.GetByIdAsync(inquiry.WorkshopOwnerId);
+
+                var itemResponses = items.Select(item => new InquiryItemResponse(
+                    item.Id,
+                    item.PartName,
+                    item.PreferredBrand,
+                    item.Quantity,
+                    item.Remark,
+                    item.AudioUrl,
+                    item.AudioDuration,
+                    item.Image1Url,
+                    item.Image2Url,
+                    item.Image3Url,
+                    item.CreatedAt
+                )).ToList();
+
+                responses.Add(new InquiryResponse(
+                    inquiry.Id,
+                    inquiry.VehicleId,
+                    inquiry.VehicleVisitId,
+                    inquiry.WorkshopOwnerId,
+                    inquiry.RequestedByStaffId,
+                    inquiry.InquiryNumber,
+                    inquiry.JobCategory,
+                    inquiry.Status.ToStatusString(),
+                    inquiry.PlacedDate,
+                    inquiry.ClosedDate,
+                    inquiry.DeclinedDate,
+                    itemResponses,
+                    vehicle != null ? $"{vehicle.Brand} {vehicle.Model}" : null,
+                    vehicle?.PlateNumber,
+                    staff?.Name,
+                    workshopOwner?.WorkshopName
+                ));
+            }
+
+            return Ok(new InquiryListResponse(responses, responses.Count));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Error retrieving inquiries", error = ex.Message });
         }
     }
 
@@ -145,6 +211,7 @@ public class InquiryController : ControllerBase
             var staff = inquiry.RequestedByStaffId.HasValue
                 ? await _staffRepository.GetByIdAsync(inquiry.RequestedByStaffId.Value)
                 : null;
+            var workshopOwner = await _workshopOwnerRepository.GetByIdAsync(inquiry.WorkshopOwnerId);
 
             var itemResponses = items.Select(item => new InquiryItemResponse(
                 item.Id,
@@ -175,7 +242,8 @@ public class InquiryController : ControllerBase
                 itemResponses,
                 vehicle != null ? $"{vehicle.Brand} {vehicle.Model}" : null,
                 vehicle?.PlateNumber,
-                staff?.Name
+                staff?.Name,
+                workshopOwner?.WorkshopName
             );
 
             return Ok(response);
@@ -204,6 +272,7 @@ public class InquiryController : ControllerBase
                 var staff = inquiry.RequestedByStaffId.HasValue
                     ? await _staffRepository.GetByIdAsync(inquiry.RequestedByStaffId.Value)
                     : null;
+                var workshopOwner = await _workshopOwnerRepository.GetByIdAsync(inquiry.WorkshopOwnerId);
 
                 var itemResponses = items.Select(item => new InquiryItemResponse(
                     item.Id,
@@ -234,7 +303,8 @@ public class InquiryController : ControllerBase
                     itemResponses,
                     vehicle != null ? $"{vehicle.Brand} {vehicle.Model}" : null,
                     vehicle?.PlateNumber,
-                    staff?.Name
+                    staff?.Name,
+                    workshopOwner?.WorkshopName
                 ));
             }
 
@@ -264,6 +334,7 @@ public class InquiryController : ControllerBase
                 var staff = inquiry.RequestedByStaffId.HasValue
                     ? await _staffRepository.GetByIdAsync(inquiry.RequestedByStaffId.Value)
                     : null;
+                var workshopOwner = await _workshopOwnerRepository.GetByIdAsync(inquiry.WorkshopOwnerId);
 
                 var itemResponses = items.Select(item => new InquiryItemResponse(
                     item.Id,
@@ -294,7 +365,8 @@ public class InquiryController : ControllerBase
                     itemResponses,
                     vehicle != null ? $"{vehicle.Brand} {vehicle.Model}" : null,
                     vehicle?.PlateNumber,
-                    staff?.Name
+                    staff?.Name,
+                    workshopOwner?.WorkshopName
                 ));
             }
 

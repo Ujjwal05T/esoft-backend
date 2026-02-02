@@ -24,6 +24,9 @@ builder.Services.AddScoped<IVehicleVisitRepository, VehicleVisitRepository>();
 builder.Services.AddScoped<IWorkshopStaffRepository, WorkshopStaffRepository>();
 builder.Services.AddScoped<IJobCardRepository, JobCardRepository>();
 builder.Services.AddScoped<IInquiryRepository, InquiryRepository>();
+builder.Services.AddScoped<IAreaRepository, AreaRepository>();
+builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+builder.Services.AddScoped<ISalesPersonRepository, SalesPersonRepository>();
 
 // Services
 builder.Services.AddHttpClient(); // Required for Authkey SMS service

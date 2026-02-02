@@ -61,7 +61,8 @@ public record InquiryResponse(
     // Additional info from joins
     string? VehicleName,
     string? NumberPlate,
-    string? RequestedByName
+    string? RequestedByName,
+    string? WorkshopName
 );
 
 public record InquiryListResponse(

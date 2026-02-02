@@ -61,6 +61,14 @@ public class InquiryRepository : IInquiryRepository
         return await connection.ExecuteScalarAsync<int>(sql, item);
     }
 
+    public async Task<List<Inquiry>> GetAllInquiriesAsync()
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        const string sql = "SELECT * FROM Inquiries ORDER BY PlacedDate DESC";
+        var result = await connection.QueryAsync<Inquiry>(sql);
+        return result.ToList();
+    }
+
     public async Task<Inquiry?> GetInquiryByIdAsync(int id)
     {
         using var connection = _connectionFactory.CreateConnection();
