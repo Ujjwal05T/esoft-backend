@@ -16,6 +16,7 @@ public class WorkshopStaff
     public string? PhotoUrl { get; set; }
     
     // Workshop Reference
+    // TODO: WorkshopId is redundant — no separate Workshop entity exists, this maps to the same row as WorkshopOwnerId. Remove and consolidate to WorkshopOwnerId.
     public int WorkshopId { get; set; }
     public int WorkshopOwnerId { get; set; }
     public string? City { get; set; }

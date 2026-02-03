@@ -161,6 +161,22 @@ public class SalesPersonRepository : ISalesPersonRepository
         return rowsAffected > 0;
     }
 
+    public async Task<IEnumerable<SalesPerson>> GetActiveByAssignedWorkshopOwnerIdAsync(int workshopOwnerId)
+    {
+        using var connection = _connectionFactory.CreateConnection();
+        const string sql = @"
+            SELECT * FROM SalesPersons
+            WHERE Status = 'Active'
+              AND Role = 'Sales Person'
+              AND AssignedWorkshopOwnerIds IS NOT NULL
+              AND EXISTS (
+                  SELECT 1 FROM OPENJSON(AssignedWorkshopOwnerIds)
+                  WHERE CAST([value] AS INT) = @WorkshopOwnerId
+              )
+            ORDER BY Name";
+        return await connection.QueryAsync<SalesPerson>(sql, new { WorkshopOwnerId = workshopOwnerId });
+    }
+
     public async Task<bool> SetStatusAsync(int id, string status)
     {
         using var connection = _connectionFactory.CreateConnection();

@@ -18,6 +18,10 @@ public class Inquiry
     public string JobCategory { get; set; } = string.Empty;
     public InquiryStatus Status { get; set; } = InquiryStatus.Open;
     
+    // Assigned Sales Person
+    public int? AssignedToId { get; set; }
+    public string? AssignedToName { get; set; }
+
     // Dates
     public DateTime PlacedDate { get; set; } = DateTime.UtcNow;
     public DateTime? ClosedDate { get; set; }

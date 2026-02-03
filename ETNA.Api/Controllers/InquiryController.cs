@@ -13,17 +13,23 @@ public class InquiryController : ControllerBase
     private readonly IVehicleRepository _vehicleRepository;
     private readonly IWorkshopStaffRepository _staffRepository;
     private readonly IWorkshopOwnerRepository _workshopOwnerRepository;
+    private readonly ISalesPersonRepository _salesPersonRepository;
+    private readonly ILogger<InquiryController> _logger;
 
     public InquiryController(
         IInquiryRepository inquiryRepository,
         IVehicleRepository vehicleRepository,
         IWorkshopStaffRepository staffRepository,
-        IWorkshopOwnerRepository workshopOwnerRepository)
+        IWorkshopOwnerRepository workshopOwnerRepository,
+        ISalesPersonRepository salesPersonRepository,
+        ILogger<InquiryController> logger)
     {
         _inquiryRepository = inquiryRepository;
         _vehicleRepository = vehicleRepository;
         _staffRepository = staffRepository;
         _workshopOwnerRepository = workshopOwnerRepository;
+        _salesPersonRepository = salesPersonRepository;
+        _logger = logger;
     }
 
     /// <summary>
@@ -44,6 +50,24 @@ public class InquiryController : ControllerBase
             // Generate inquiry number
             var inquiryNumber = await _inquiryRepository.GenerateInquiryNumberAsync(request.WorkshopOwnerId);
 
+            // Auto-assign sales person based on WorkshopOwnerId
+            var candidates = await _salesPersonRepository.GetActiveByAssignedWorkshopOwnerIdAsync(request.WorkshopOwnerId);
+            var assignedSalesPerson = candidates.FirstOrDefault();
+
+            if (assignedSalesPerson != null)
+            {
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Inquiry for WorkshopOwnerId {WorkshopOwnerId} auto-assigned to SalesPerson {SalesPersonId} ({SalesPersonName})",
+                        request.WorkshopOwnerId, assignedSalesPerson.Id, assignedSalesPerson.Name);
+                }
+            }
+            else
+            {
+                _logger.LogWarning("No active SalesPerson found for WorkshopOwnerId {WorkshopOwnerId}. Inquiry will be created unassigned.",
+                    request.WorkshopOwnerId);
+            }
+
             // Create inquiry
             var inquiry = new Inquiry
             {
@@ -54,6 +78,8 @@ public class InquiryController : ControllerBase
                 InquiryNumber = inquiryNumber,
                 JobCategory = request.JobCategory,
                 Status = InquiryStatus.Open,
+                AssignedToId = assignedSalesPerson?.Id,
+                AssignedToName = assignedSalesPerson?.Name,
                 PlacedDate = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow
             };
@@ -119,7 +145,13 @@ public class InquiryController : ControllerBase
                 $"{vehicle.Brand} {vehicle.Model}",
                 vehicle.PlateNumber,
                 staff?.Name,
-                null // workshopOwnerName - not needed for POST
+                null, // workshopOwnerName - not needed for POST
+                inquiry.AssignedToId,
+                inquiry.AssignedToName,
+                vehicle.Variant,
+                vehicle.Year,
+                vehicle.ChassisNumber,
+                null // workshopOwnerPhone - not needed for POST
             );
 
             return CreatedAtAction(nameof(GetInquiryById), new { id = inquiryId }, response);
@@ -180,7 +212,13 @@ public class InquiryController : ControllerBase
                     vehicle != null ? $"{vehicle.Brand} {vehicle.Model}" : null,
                     vehicle?.PlateNumber,
                     staff?.Name,
-                    workshopOwner?.WorkshopName
+                    workshopOwner?.WorkshopName,
+                    inquiry.AssignedToId,
+                    inquiry.AssignedToName,
+                    vehicle?.Variant,
+                    vehicle?.Year,
+                    vehicle?.ChassisNumber,
+                    workshopOwner?.PhoneNumber
                 ));
             }
 
@@ -243,7 +281,13 @@ public class InquiryController : ControllerBase
                 vehicle != null ? $"{vehicle.Brand} {vehicle.Model}" : null,
                 vehicle?.PlateNumber,
                 staff?.Name,
-                workshopOwner?.WorkshopName
+                workshopOwner?.WorkshopName,
+                inquiry.AssignedToId,
+                inquiry.AssignedToName,
+                vehicle?.Variant,
+                vehicle?.Year,
+                vehicle?.ChassisNumber,
+                workshopOwner?.PhoneNumber
             );
 
             return Ok(response);
@@ -304,7 +348,13 @@ public class InquiryController : ControllerBase
                     vehicle != null ? $"{vehicle.Brand} {vehicle.Model}" : null,
                     vehicle?.PlateNumber,
                     staff?.Name,
-                    workshopOwner?.WorkshopName
+                    workshopOwner?.WorkshopName,
+                    inquiry.AssignedToId,
+                    inquiry.AssignedToName,
+                    vehicle?.Variant,
+                    vehicle?.Year,
+                    vehicle?.ChassisNumber,
+                    workshopOwner?.PhoneNumber
                 ));
             }
 
@@ -366,7 +416,13 @@ public class InquiryController : ControllerBase
                     vehicle != null ? $"{vehicle.Brand} {vehicle.Model}" : null,
                     vehicle?.PlateNumber,
                     staff?.Name,
-                    workshopOwner?.WorkshopName
+                    workshopOwner?.WorkshopName,
+                    inquiry.AssignedToId,
+                    inquiry.AssignedToName,
+                    vehicle?.Variant,
+                    vehicle?.Year,
+                    vehicle?.ChassisNumber,
+                    workshopOwner?.PhoneNumber
                 ));
             }
 

@@ -62,7 +62,15 @@ public record InquiryResponse(
     string? VehicleName,
     string? NumberPlate,
     string? RequestedByName,
-    string? WorkshopName
+    string? WorkshopName,
+    int? AssignedToId,
+    string? AssignedToName,
+    // Vehicle detail fields
+    string? Variant,
+    int? Year,
+    string? ChassisNumber,
+    // Workshop owner contact
+    string? WorkshopOwnerPhone
 );
 
 public record InquiryListResponse(

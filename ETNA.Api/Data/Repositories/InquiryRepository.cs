@@ -21,11 +21,13 @@ public class InquiryRepository : IInquiryRepository
         const string sql = @"
             INSERT INTO Inquiries (
                 VehicleId, VehicleVisitId, WorkshopOwnerId, RequestedByStaffId,
-                InquiryNumber, JobCategory, Status, PlacedDate, CreatedAt
+                InquiryNumber, JobCategory, Status, AssignedToId, AssignedToName,
+                PlacedDate, CreatedAt
             )
             VALUES (
                 @VehicleId, @VehicleVisitId, @WorkshopOwnerId, @RequestedByStaffId,
-                @InquiryNumber, @JobCategory, @Status, @PlacedDate, @CreatedAt
+                @InquiryNumber, @JobCategory, @Status, @AssignedToId, @AssignedToName,
+                @PlacedDate, @CreatedAt
             );
             SELECT CAST(SCOPE_IDENTITY() as int);";
 
@@ -38,6 +40,8 @@ public class InquiryRepository : IInquiryRepository
             inquiry.InquiryNumber,
             inquiry.JobCategory,
             Status = inquiry.Status.ToString().ToLower(),
+            inquiry.AssignedToId,
+            inquiry.AssignedToName,
             inquiry.PlacedDate,
             inquiry.CreatedAt
         });

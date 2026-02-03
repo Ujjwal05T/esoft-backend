@@ -19,6 +19,9 @@ public interface ISalesPersonRepository
     Task<SalesPerson?> UpdateAsync(SalesPerson salesPerson);
     Task<bool> DeleteAsync(int id);
     
+    // Lookup by assigned workshop
+    Task<IEnumerable<SalesPerson>> GetActiveByAssignedWorkshopOwnerIdAsync(int workshopOwnerId);
+
     // Status management
     Task<bool> SetStatusAsync(int id, string status);
     

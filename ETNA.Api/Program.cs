@@ -27,6 +27,7 @@ builder.Services.AddScoped<IInquiryRepository, InquiryRepository>();
 builder.Services.AddScoped<IAreaRepository, AreaRepository>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 builder.Services.AddScoped<ISalesPersonRepository, SalesPersonRepository>();
+builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
 
 // Services
 builder.Services.AddHttpClient(); // Required for Authkey SMS service
